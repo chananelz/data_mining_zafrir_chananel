@@ -1,5 +1,7 @@
 # homework 01
+# Zafrir Fourerr   318260023
 # Chananel Zaguri 206275711
+
 # This function read k txt fill and creat k arff fill correspondingly
 # In the arff fill each line describe a patient and contain:
 # ID
