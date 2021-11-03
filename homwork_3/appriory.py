@@ -2,7 +2,7 @@ import random
 from itertools import combinations
 
 N = 5  # no. of attributes
-MINSUP = 0.2
+MINSUP = 0.15
 
 
 # Creates a file named filename containing m sorted itemsets of items 0..N-1
@@ -73,12 +73,14 @@ def create_kplus1_itemsets(kitemsets, filename):
         # in order to create k+1 itemset
         while j < len(kitemsets) and kitemsets[i][:-1] == kitemsets[j][:-1]:
             candidate = kitemsets[i] + [kitemsets[j][-1]]
-            comb = combinations(candidate, 1)
+            comb = combinations(candidate, len(kitemsets[0]))
             comb = list(comb)
             flag = True
             for item in comb:
-                my_item = item[0]
-                if frozenset([my_item]) not in set_kitemsets:
+                list_comb = []
+                for itm in item:
+                    list_comb.append(itm)
+                if frozenset(list_comb) not in set_kitemsets:
                     flag = False
             if flag:
                 kplus1_itemsets += [kitemsets[i] + [kitemsets[j][-1]]]
