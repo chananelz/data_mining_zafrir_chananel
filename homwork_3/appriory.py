@@ -1,3 +1,6 @@
+# Zafrir Fourerr   318260023
+# Chananel Zaguri 206275711
+
 import random
 from itertools import combinations
 
@@ -54,10 +57,12 @@ def frequent_itemsets(filename, itemsets):
         line = f.readline()
     f.close()
     freqitemsets = []
+    abs_support = []
     for i in range(len(itemsets)):
         if count[i] >= MINSUP * filelength:
             freqitemsets += [itemsets[i]]
-    return freqitemsets
+            abs_support += [count[i]]
+    return freqitemsets, abs_support
 
 
 def create_kplus1_itemsets(kitemsets, filename):
@@ -93,13 +98,15 @@ def create_1itemsets(filename):
     it = []
     for i in range(N):
         it += [[i]]
-    return frequent_itemsets(filename, it)
+    return frequent_itemsets(filename, it)[0]
 
 
 def minsup_itemsets(filename):
     minsupsets = kitemsets = create_1itemsets(filename)
     while kitemsets != []:
-        kitemsets = create_kplus1_itemsets(kitemsets, filename)
+        kitemsets, coutkitemsets = create_kplus1_itemsets(kitemsets, filename)
+        for i in range(len(kitemsets)):
+            kitemsets[i].append(coutkitemsets[i])
         minsupsets += kitemsets
     return minsupsets
 
