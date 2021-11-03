@@ -1,6 +1,6 @@
 # Zafrir Fourerr   318260023
 # Chananel Zaguri 206275711
-
+import copy
 import random
 from itertools import combinations
 
@@ -98,13 +98,19 @@ def create_1itemsets(filename):
     it = []
     for i in range(N):
         it += [[i]]
-    return frequent_itemsets(filename, it)[0]
+    return frequent_itemsets(filename, it)
 
 
 def minsup_itemsets(filename):
-    minsupsets = kitemsets = create_1itemsets(filename)
+    kitemsets, coutkitemsets = create_1itemsets(filename)
+    kitemsets_without_count =  copy.deepcopy(kitemsets)
+    for i in range(len(kitemsets)):
+        kitemsets[i].append(coutkitemsets[i])
+
+    minsupsets = kitemsets
     while kitemsets != []:
-        kitemsets, coutkitemsets = create_kplus1_itemsets(kitemsets, filename)
+        kitemsets, coutkitemsets = create_kplus1_itemsets(kitemsets_without_count, filename)
+        kitemsets_without_count = copy.deepcopy(kitemsets)
         for i in range(len(kitemsets)):
             kitemsets[i].append(coutkitemsets[i])
         minsupsets += kitemsets
