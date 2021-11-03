@@ -1,13 +1,12 @@
 # homework 01
 # Zafrir Fourerr   318260023
 # Chananel Zaguri 206275711
-
 # This function read k txt fill and creat k arff fill correspondingly
 # In the arff fill each line describe a patient and contain:
 # ID
 # Time
 # category low/high
-#הערה חשובה- המרצה אמר שלנפות זה להשים סימן שאלה ולא להתעלם לגמרי.
+# הערה חשובה- המרצה אמר שלנפות זה להשים סימן שאלה ולא להתעלם לגמרי.
 from math import sqrt
 
 
@@ -44,4 +43,28 @@ def convert2arff(k):
     fout.close()
 
 
+def stdv(k):
+    fin = open(str(k) + ".txt", "r")  # open the relevant txt fill
+    sum = 0  # this var save the sum
+    powSum = 0  # this var save power of the sum
+    count = 0  # this var save how many valid instances we have
+    for time in range(1440):  # go over 24H
+        s = fin.readline().split()  # get the data about each ill
+        for patient in range(len(s)):  # go over line
+            temp = float(s[patient])  # convert to float
+            if temp < 36 or temp > 43:  # convert from Fahrenheit to Celsius
+                temp = (temp - 32) / 1.8
+            if temp < 36 or temp > 43:  # if the data not valid pass this piece of data
+                continue
+            sum += temp  # update the var
+            powSum += temp * temp
+            count = count + 1
+
+    mean = sum / (count)  # calculate the mean
+    variance = (powSum / (count)) - mean * mean  # calculate the variance
+    fin.close()
+    return sqrt(variance)  # return stdv
+
+
 convert2arff(3)
+print(stdv(1))
