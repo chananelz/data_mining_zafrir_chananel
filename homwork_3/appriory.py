@@ -1,4 +1,5 @@
 import random
+from itertools import combinations
 
 N = 5  # no. of attributes
 MINSUP = 0.4
@@ -56,20 +57,31 @@ def frequent_itemsets(filename, itemsets):
     for i in range(len(itemsets)):
         if count[i] >= MINSUP * filelength:
             freqitemsets += [itemsets[i]]
-    #         + [[count[i]]]
     return freqitemsets
 
 
 def create_kplus1_itemsets(kitemsets, filename):
     kplus1_itemsets = []
-    # TODO check if can improve check if k items is freq
+    set_kitemsets = set()
+    for item in kitemsets:
+        set_kitemsets.add(item[0])
+
     for i in range(len(kitemsets) - 1):
         j = i + 1  # j is an index
         # compares all pairs, without the last item, (note that the lists are sorted)
         # and if they are equal than adds the last item of kitemsets[j] to kitemsets[i]
         # in order to create k+1 itemset
         while j < len(kitemsets) and kitemsets[i][:-1] == kitemsets[j][:-1]:
-            kplus1_itemsets += [kitemsets[i] + [kitemsets[j][-1]]]
+            candidate = kitemsets[i] + [kitemsets[j][-1]]
+            comb = combinations(candidate, 1)
+            comb = list(comb)
+            flag = True
+            for item in comb:
+                my_item = item[0]
+                if my_item not in set_kitemsets:
+                    flag = False
+            if flag:
+                kplus1_itemsets += [kitemsets[i] + [kitemsets[j][-1]]]
             j += 1
     # checks which of the k+1 itemsets are frequent
     return frequent_itemsets(filename, kplus1_itemsets)
