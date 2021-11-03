@@ -87,6 +87,7 @@ def create_kplus1_itemsets(kitemsets, filename):
                     list_comb.append(itm)
                 if frozenset(list_comb) not in set_kitemsets:
                     flag = False
+                    break
             if flag:
                 kplus1_itemsets += [kitemsets[i] + [kitemsets[j][-1]]]
             j += 1
