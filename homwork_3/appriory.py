@@ -69,7 +69,7 @@ def create_kplus1_itemsets(kitemsets, filename):
     kplus1_itemsets = []
     set_kitemsets = set()
     for item in kitemsets:
-        set_kitemsets.add(frozenset(item))
+        set_kitemsets.add(frozenset(item))  # add item to set structure
 
     for i in range(len(kitemsets) - 1):
         j = i + 1  # j is an index
@@ -77,19 +77,23 @@ def create_kplus1_itemsets(kitemsets, filename):
         # and if they are equal than adds the last item of kitemsets[j] to kitemsets[i]
         # in order to create k+1 itemset
         while j < len(kitemsets) and kitemsets[i][:-1] == kitemsets[j][:-1]:
-            candidate = kitemsets[i] + [kitemsets[j][-1]]
-            comb = combinations(candidate, len(kitemsets[0]))
-            comb = list(comb)
+
+            candidate = kitemsets[i] + [kitemsets[j][-1]] # take candidate from kitemsets
+
+            comb = combinations(candidate, len(kitemsets[0])) #all the combinations of sub group of candidate
+            comb = list(comb) # turned to list
             flag = True
             for item in comb:
                 list_comb = []
                 for itm in item:
-                    list_comb.append(itm)
-                if frozenset(list_comb) not in set_kitemsets:
-                    flag = False
+                    list_comb.append(itm) # append the combination to the new list -regular list
+
+                if frozenset(list_comb) not in set_kitemsets: # if one of the comb is not in the original set
+                    flag = False                              # stop and return false
                     break
             if flag:
-                kplus1_itemsets += [kitemsets[i] + [kitemsets[j][-1]]]
+                kplus1_itemsets += [kitemsets[i] + [kitemsets[j][-1]]] # if all the combination is in the original set
+                                                                        #then append it to  kplus1_itemsets
             j += 1
     # checks which of the k+1 itemsets are frequent
     return frequent_itemsets(filename, kplus1_itemsets)
