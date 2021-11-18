@@ -13,6 +13,14 @@ TEST_IMAGES_PATH = r"C:\Users\user1\Desktop\pythonProjects\data_mining_zafrir_ch
 TEST_LABELS_PATH = r"C:\Users\user1\Desktop\pythonProjects\data_mining_zafrir_chananel\homwork_4\files\t10k-labels.idx1-ubyte"
 
 
+# def classify(models, test_img):
+#     index_list = []
+#     for i in range(10):
+#         if classifier(models[i], test_img) == 1:
+#             index_list.append(i)
+#     return index_list
+
+
 def check_value(x):
     if x >= 130:
         return 1
@@ -34,26 +42,31 @@ def preprocess_change2Binary():
         image.append(check_value(ord(x)))
         for i in range(783):
             image.append(check_value(ord((fimages.read(1)))))
-        image.append(ord(flabels.read(1)))
+        image.append('x')
+        list_labels.append(ord(flabels.read(1)))
         list_images.append(image)
         x = fimages.read(1)
     fimages.close()
+    flabels.close()
     print("End")
-    return list_images
+    return list_images,list_labels
 
 
-def pre_builder_classifier(list_images):
+def pre_builder_classifier(list_images_labels):
+    list_images = list_images_labels[0]
+    list_labels = list_images_labels[1]
     module = []
     for i in range(10):
-        module.append(build_classfier(list_images, i))
+        module.append(build_classfier(list_images,list_labels, i))
+    return module
 
 
-def build_classfier(list_images, index):
-    for element in list_images:
-        if element[-1] == index:
-            element[-1] = 1
+def build_classfier(list_images,list_labels, index):
+    for j in range(len(list_labels)):
+        if list_labels[j] == index:
+            list_images[j][-1] = 1
         else:
-            element[-1] = 0
+            list_images[j][-1] = 0
     return build(list_images)
 
 
@@ -167,15 +180,16 @@ def classifier(dtree, traits):  # same as the former without recursion
     return dtree[1]
 
 
-e = [[1, 0, 0, 0, 0],
-     [0, 1, 1, 0, 1],
-     [1, 1, 1, 0, 0],
-     [1, 1, 0, 1, 0],
-     [0, 0, 1, 1, 1],
-     [1, 0, 1, 1, 0],
-     [1, 0, 0, 1, 1]]
+# e = [[1, 0, 0, 0, 0],
+#      [0, 1, 1, 0, 1],
+#      [1, 1, 1, 0, 0],
+#      [1, 1, 0, 1, 0],
+#      [0, 0, 1, 1, 1],
+#      [1, 0, 1, 1, 0],
+#      [1, 0, 0, 1, 1]]
 
 # t = build(e)
 # print(classifier(t, [0, 1, 1, 1]))
-
-
+x = pre_builder_classifier(preprocess_change2Binary())
+print(x)
+print("1======")
