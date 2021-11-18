@@ -32,12 +32,26 @@ def preprocess_change2Binary():
         image.append(check_value(ord(x)))
         for i in range(783):
             image.append(check_value(ord((fimages.read(1)))))
+        image.append(ord(flabels.read(1)))
         list_images.append(image)
         x = fimages.read(1)
     fimages.close()
 
     return list_images
 
+def pre_builder_classifier(list_images):
+	module=[]
+	for i in range(10):
+		module.append(build_classfier(list_images,i))
+
+
+def build_classfier(list_images,index):
+	for	element in list_images:
+		if element[-1]==index:
+			element[-1]=1
+		else:
+			element[-1]=0
+	return build(list_images)
 
 def split(examples, used, trait):
     """
