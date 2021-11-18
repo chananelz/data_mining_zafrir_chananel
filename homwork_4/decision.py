@@ -13,12 +13,33 @@ TEST_IMAGES_PATH = r"C:\Users\user1\Desktop\pythonProjects\data_mining_zafrir_ch
 TEST_LABELS_PATH = r"C:\Users\user1\Desktop\pythonProjects\data_mining_zafrir_chananel\homwork_4\files\t10k-labels.idx1-ubyte"
 
 
-# def classify(models, test_img):
-#     index_list = []
-#     for i in range(10):
-#         if classifier(models[i], test_img) == 1:
-#             index_list.append(i)
-#     return index_list
+def temp(models):
+    fimages = open(TRAIN_IMAGES_PATH, "rb")
+
+    fimages.seek(16)
+    x = fimages.read(1)
+    while x != b"":
+        image = []
+        image.append(check_value(ord(x)))
+        for i in range(783):
+            image.append(check_value(ord((fimages.read(1)))))
+        x = fimages.read(1)
+        classify(models,image)
+
+    fimages.close()
+    print("End")
+    return
+
+
+
+
+def classify(models, test_img):
+    index_list = []
+    for i in range(10):
+        if classifier(models[i], test_img) == 1:
+            index_list.append(i)
+    print(index_list)
+    return index_list
 
 
 def check_value(x):
@@ -58,6 +79,7 @@ def pre_builder_classifier(list_images_labels):
     module = []
     for i in range(10):
         module.append(build_classfier(list_images,list_labels, i))
+    temp(module)
     return module
 
 
@@ -176,8 +198,9 @@ def recClassifier(dtree, traits):  # dtree is the tree, traits is an example to 
 
 def classifier(dtree, traits):  # same as the former without recursion
     while dtree[0] != []:
-        dtree = dtree[traits[dtree[1]] * 2]
+        dtree = dtree[traits[dtree[1]] * 2] #dtree[1] - atrebut , traits[dtree[1]] value of the ficher
     return dtree[1]
+
 
 
 # e = [[1, 0, 0, 0, 0],
