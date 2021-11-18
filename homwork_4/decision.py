@@ -1,34 +1,36 @@
 '''
 Zafrir Fourerr 318260023
-Chananel Zaguri
+Chananel Zaguri 206275711
 '''
+# C:\Users\user1\Desktop\pythonProjects\data_mining_zafrir_chananel\homwork_4\files\t10k-images.idx3-ubyte
 
 import math
 
 MAX_DEPTH = 2
-TRAIN_IMAGES_PATH=r"C:\Users\zafri\Desktop\github_repo\homwork_4\files\train-images.idx3-ubyte"
-TRAIN_LABELS_PATH=r"C:\Users\zafri\Desktop\github_repo\homwork_4\files\train-labels.idx1-ubyte"
-TEST_IMAGES_PATH=r"C:\Users\zafri\Desktop\github_repo\homwork_4\files\t10k-images.idx3-ubyte"
-TEST_LABELS_PATH=r"C:\Users\zafri\Desktop\github_repo\homwork_4\files\t10k-labels.idx1-ubyte"
+TRAIN_IMAGES_PATH = r"C:\Users\user1\Desktop\pythonProjects\data_mining_zafrir_chananel\homwork_4\files\train-images.idx3-ubyte"
+TRAIN_LABELS_PATH = r"C:\Users\user1\Desktop\pythonProjects\data_mining_zafrir_chananel\homwork_4\files\train-labels.idx1-ubyte"
+TEST_IMAGES_PATH = r"C:\Users\user1\Desktop\pythonProjects\data_mining_zafrir_chananel\homwork_4\files\t10k-images.idx3-ubyte"
+TEST_LABELS_PATH = r"C:\Users\user1\Desktop\pythonProjects\data_mining_zafrir_chananel\homwork_4\files\t10k-labels.idx1-ubyte"
 
 
 def check_value(x):
-    if x>=130:
+    if x >= 130:
         return 1
     else:
         return 0
 
+
 def preprocess_change2Binary():
     fimages = open(TRAIN_IMAGES_PATH, "rb")
     flabels = open(TRAIN_LABELS_PATH, "rb")
-    list_images=[]
-    list_labels=[]
+    list_images = []
+    list_labels = []
 
     flabels.seek(8)
     fimages.seek(16)
     x = fimages.read(1)
     while x != b"":
-        image=[]
+        image = []
         image.append(check_value(ord(x)))
         for i in range(783):
             image.append(check_value(ord((fimages.read(1)))))
@@ -36,22 +38,24 @@ def preprocess_change2Binary():
         list_images.append(image)
         x = fimages.read(1)
     fimages.close()
-
+    print("End")
     return list_images
 
+
 def pre_builder_classifier(list_images):
-	module=[]
-	for i in range(10):
-		module.append(build_classfier(list_images,i))
+    module = []
+    for i in range(10):
+        module.append(build_classfier(list_images, i))
 
 
-def build_classfier(list_images,index):
-	for	element in list_images:
-		if element[-1]==index:
-			element[-1]=1
-		else:
-			element[-1]=0
-	return build(list_images)
+def build_classfier(list_images, index):
+    for element in list_images:
+        if element[-1] == index:
+            element[-1] = 1
+        else:
+            element[-1] = 0
+    return build(list_images)
+
 
 def split(examples, used, trait):
     """
@@ -171,12 +175,7 @@ e = [[1, 0, 0, 0, 0],
      [1, 0, 1, 1, 0],
      [1, 0, 0, 1, 1]]
 
-t = build(e)
-print(classifier(t, [0, 1, 1, 1]))
-
-
-preprocess_change2Binary()
-
-
+# t = build(e)
+# print(classifier(t, [0, 1, 1, 1]))
 
 
