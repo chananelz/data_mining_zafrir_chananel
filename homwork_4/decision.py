@@ -6,11 +6,89 @@ Chananel Zaguri 206275711
 
 import math
 
-MAX_DEPTH = 2
+MAX_DEPTH = 10
 TRAIN_IMAGES_PATH = r"C:\Users\user1\Desktop\pythonProjects\data_mining_zafrir_chananel\homwork_4\files\train-images.idx3-ubyte"
 TRAIN_LABELS_PATH = r"C:\Users\user1\Desktop\pythonProjects\data_mining_zafrir_chananel\homwork_4\files\train-labels.idx1-ubyte"
 TEST_IMAGES_PATH = r"C:\Users\user1\Desktop\pythonProjects\data_mining_zafrir_chananel\homwork_4\files\t10k-images.idx3-ubyte"
 TEST_LABELS_PATH = r"C:\Users\user1\Desktop\pythonProjects\data_mining_zafrir_chananel\homwork_4\files\t10k-labels.idx1-ubyte"
+THRESHOLD = 130
+#--------------------------------------------------------------------------------------------------------------------------------
+# ONLY FOR TEST
+TRAIN_IMAGES_PATH_TXT = r"C:\Users\user1\Desktop\pythonProjects\data_mining_zafrir_chananel\homwork_4\files\digits-training.txt"
+TEST_LABELS_PATH_TXT = r"C:\Users\user1\Desktop\pythonProjects\data_mining_zafrir_chananel\homwork_4\files\digits-testing.txt"
+
+def preprocess_change2Binary_XXX():
+    fimages = open(TRAIN_IMAGES_PATH_TXT, "r")
+
+    list_images = []
+    list_labels = []
+
+    for line in fimages.readlines():
+        fields = line.split(',')
+        image = []
+        for i in range(len(fields)-1):
+            image.append(check_value(int(fields[i])))
+        image.append('x')
+        list_labels.append(int(fields[-1]))
+        list_images.append(image)
+
+    fimages.close()
+    print("End")
+    return list_images,list_labels
+
+def get_test_row():
+    fimages = open(TEST_LABELS_PATH_TXT, "r")
+
+    for line in fimages.readlines():
+        fields = line.split(',')
+        image = []
+        for i in range(len(fields) - 1):
+            image.append(check_value(int(fields[i])))
+        return image
+
+def get_test_rows():
+    fimages = open(TEST_LABELS_PATH_TXT, "r")
+    list_images = []
+    for line in fimages.readlines():
+        fields = line.split(',')
+        image = []
+        for i in range(len(fields)-1):
+            image.append(check_value(int(fields[i])))
+        image.append(int(fields[-1]))
+        list_images.append(image)
+    return list_images
+
+
+
+#-----------------------------------------------------------------------------------------------------------------------------------
+
+def threshold():
+    global THRESHOLD
+    best_threshold = -1
+    best_threshold_accuracy=-1
+    for i in range(256):
+        THRESHOLD = i
+        model_threshold = pre_builder_classifier(preprocess_change2Binary_XXX())
+        accuracy = tester(model_threshold, get_test_rows())
+        if accuracy > best_threshold_accuracy:
+            best_threshold_accuracy = accuracy
+            best_threshold = THRESHOLD
+    print(best_threshold_accuracy)
+    THRESHOLD = 130
+    return best_threshold
+
+
+
+
+def tester(models,test_list):
+    counter = 0
+    for test_image in test_list:
+        real_target = test_image[-1]
+        del test_image[-1]
+        all_target = classify(models,test_image)
+        if len(all_target) ==1 and real_target==all_target[0]:
+            counter += 1
+    return (counter/(len(test_list)))*100
 
 
 def temp(models):
@@ -32,18 +110,17 @@ def temp(models):
 
 
 
-
 def classify(models, test_img):
     index_list = []
     for i in range(10):
         if classifier(models[i], test_img) == 1:
             index_list.append(i)
-    print(index_list)
+    # print(index_list)
     return index_list
 
 
 def check_value(x):
-    if x >= 130:
+    if x >= THRESHOLD:
         return 1
     else:
         return 0
@@ -79,7 +156,7 @@ def pre_builder_classifier(list_images_labels):
     module = []
     for i in range(10):
         module.append(build_classfier(list_images,list_labels, i))
-    temp(module)
+    # temp(module)
     return module
 
 
@@ -211,8 +288,10 @@ def classifier(dtree, traits):  # same as the former without recursion
 #      [1, 0, 1, 1, 0],
 #      [1, 0, 0, 1, 1]]
 
+print(threshold())
 # t = build(e)
 # print(classifier(t, [0, 1, 1, 1]))
-x = pre_builder_classifier(preprocess_change2Binary())
-print(x)
+# x = pre_builder_classifier(preprocess_change2Binary_XXX())
+# list_target = classify(x,get_test_row())
+# print(tester(x,get_test_rows()))
 print("1======")
