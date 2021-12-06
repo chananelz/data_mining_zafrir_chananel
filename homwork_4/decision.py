@@ -5,13 +5,12 @@ Chananel Zaguri 206275711
 
 import math
 
-MAX_DEPTH = 10     # we save max depth as a const because it make sense but the user can change it. (In python you can change const var)
-THRESHOLD = 130     # we save threshold as a const because it make sense but the user can change it. (In python you can change const var)
+MAX_DEPTH = 10  # we save max depth as a const because it make sense but the user can change it. (In python you can change const var)
+THRESHOLD = 130  # we save threshold as a const because it make sense but the user can change it. (In python you can change const var)
 TRAIN_IMAGES_PATH = r"C:\Users\user1\Desktop\pythonProjects\data_mining_zafrir_chananel\homwork_4\files\train-images.idx3-ubyte"
 TRAIN_LABELS_PATH = r"C:\Users\user1\Desktop\pythonProjects\data_mining_zafrir_chananel\homwork_4\files\train-labels.idx1-ubyte"
 TEST_IMAGES_PATH = r"C:\Users\user1\Desktop\pythonProjects\data_mining_zafrir_chananel\homwork_4\files\t10k-images.idx3-ubyte"
 TEST_LABELS_PATH = r"C:\Users\user1\Desktop\pythonProjects\data_mining_zafrir_chananel\homwork_4\files\t10k-labels.idx1-ubyte"
-
 
 # --------------------------------------------------------------------------------------------------------------------------------
 # ONLY FOR DEBUGGING - TAKE DATA FROM TXT FILE
@@ -95,16 +94,16 @@ def preprocess_change2Binary():
     list_images = []
     list_labels = []
 
-    flabels.seek(8)  # we need this comannd because we use ubyte format
+    flabels.seek(8)  # we need this comannds because we use ubyte format
     fimages.seek(16)
     x = fimages.read(1)
     while x != b"":
         image = []
-        image.append(check_value(ord(x)))
-        for i in range(783):
+        image.append(check_value(ord(x)))  # convert the data to 0/1 according to the threshold
+        for i in range(783):  # get over all attribute = pixel
             image.append(check_value(ord((fimages.read(1)))))
         image.append('x')
-        list_labels.append(ord(flabels.read(1)))
+        list_labels.append(ord(flabels.read(1)))  # we use ord because we deal with ubyte format
         list_images.append(image)
         x = fimages.read(1)
     fimages.close()
@@ -115,19 +114,19 @@ def preprocess_change2Binary():
 
 def get_test_rows():
     """
-
-    :return:
+    run the files of labels test and images test
+    :return: list of labels and their targets together for test
     """
     fimages = open(TEST_IMAGES_PATH, "rb")
     flabels = open(TEST_LABELS_PATH, "rb")
     list_images = []
-    flabels.seek(8)
+    flabels.seek(8)  # we need this comannds because we use ubyte format
     fimages.seek(16)
     x = fimages.read(1)
     while x != b"":
         image = []
-        image.append(check_value(ord(x)))
-        for i in range(783):
+        image.append(check_value(ord(x)))  # convert the data to 0/1 according to the threshold
+        for i in range(783):  # get over all attribute = pixel
             image.append(check_value(ord((fimages.read(1)))))
         image.append(ord(flabels.read(1)))
         list_images.append(image)
@@ -142,17 +141,17 @@ def get_test_rows():
 
 def threshold():
     """
-
-    :return:
+    run all over appropriate threshold and check the most threshold that satisfies the most accuracy
+    :return: the best thershold to divide the data to binary
     """
     global THRESHOLD
-    best_threshold = -1
-    best_threshold_accuracy = -1
-    for i in range(130, 131):
-        THRESHOLD = i
-        model_threshold = build_models(preprocess_change2Binary_semi())
-        accuracy = tester(model_threshold, get_test_rows_semi())
-        if accuracy > best_threshold_accuracy:
+    best_threshold = -1  # this var save the threshold with the best accuracy
+    best_threshold_accuracy = -1  # this var save the accuracy of the threshold with the best accuracy
+    model_threshold = build_models(preprocess_change2Binary_semi())  # build models from the data
+    for i in range(0, 256):   # go over all the potential threshold
+        THRESHOLD = i    # update the threshold
+        accuracy = tester(model_threshold, get_test_rows_semi())  # get the accuracy with that threshold
+        if accuracy > best_threshold_accuracy:  # update best_threshold
             best_threshold_accuracy = accuracy
             best_threshold = THRESHOLD
     print(best_threshold_accuracy)
@@ -162,41 +161,40 @@ def threshold():
 
 def tester(models, test_list):
     """
-
+    run the classify method for test
     :param models:
     :param test_list:
-    :return:
+    :return: accuracy of the model based on test
     """
-    counter = 0
+    counter = 0  # save how many good classifier was
     for test_image in test_list:
-        real_target = test_image[-1]
+        real_target = test_image[-1]  # save the target from the test
         del test_image[-1]
-        all_target = classify(models, test_image)
+        all_target = classify(models, test_image)  # save the targets
         if len(all_target) == 1 and real_target == all_target[0]:
             counter += 1
-    return (counter / (len(test_list))) * 100
+    return (counter / (len(test_list))) * 100  # return the accuracy of the model
 
 
 def classify(models, test_img):
     """
-
+    run all over the models and get the models classify to 1
     :param models:
     :param test_img:
-    :return:
+    :return: the indexes of the models satisfies the test data
     """
     index_list = []
-    for i in range(10):
+    for i in range(10):  # go over all the potential target
         if classifier(models[i], test_img) == 1:
             index_list.append(i)
-    # print(index_list)
     return index_list
 
 
 def check_value(x):
     """
-
+    check the value of threshold to change the data to binary
     :param x:
-    :return:
+    :return: 1- bigger than threshold or equal  , 0-otherwise
     """
     if x >= THRESHOLD:
         return 1
@@ -206,13 +204,13 @@ def check_value(x):
 
 def build_models(list_images_labels):
     """
-
+    run ten times and create model based on train data and  index
     :param list_images_labels:
-    :return:
+    :return: ten models for train every digits (0-9)
     """
     list_images = list_images_labels[0]
     list_labels = list_images_labels[1]
-    module = []
+    module = []  # save the modules for every digit (0-9)
     for i in range(10):
         module.append(build_one_module(list_images, list_labels, i))
     return module
@@ -220,13 +218,13 @@ def build_models(list_images_labels):
 
 def build_one_module(list_images, list_labels, index):
     """
-
+    change the target to be 1 or 0 according to the index
     :param list_images:
     :param list_labels:
     :param index:
-    :return:
+    :return: one model based on train data
     """
-    for j in range(len(list_labels)):
+    for j in range(len(list_labels)):  # change the labels of image according to the index
         if list_labels[j] == index:
             list_images[j][-1] = 1
         else:
@@ -236,14 +234,14 @@ def build_one_module(list_images, list_labels, index):
 
 def buildclassifier(train_images, train_labels, d):
     """
-
+    build classifer according to train data and limited depth
     :param train_images:
     :param train_labels:
     :param d:
-    :return:
+    :return: func-"build models" that generate the models after change the values to binary
     """
-    global TRAIN_IMAGES_PATH
-    global TRAIN_LABELS_PATH
+    global TRAIN_IMAGES_PATH  # we use global because on the one hand the method need to get the file path but
+    global TRAIN_LABELS_PATH  # on the other hand it more correct that all the path will save at the beginning
     global MAX_DEPTH
 
     TRAIN_IMAGES_PATH = train_images
@@ -328,7 +326,7 @@ def minInfoTrait(examples, used):
 
 
 def build(examples, max_depth=10):  # builds used
-    global MAX_DEPTH # update MAX_DEPTH
+    global MAX_DEPTH  # update MAX_DEPTH
     MAX_DEPTH = max_depth
     used = [1] * (len(examples[0]) - 1)  # used[i]=1 means that attribute i hadn't been used
     return recBuild(examples, used, 0, 0)
