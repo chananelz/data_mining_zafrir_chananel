@@ -1,6 +1,8 @@
 '''
 Zafrir Fourerr 318260023
 Chananel Zaguri 206275711
+
+This program implement decision tree on mindset dataset hw4
 '''
 
 import math
